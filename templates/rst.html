@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background: #fff;
+    width: 90%;
+    max-width: 800px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header .status {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+header .status span {
+    color: green;
+}
+
+.result h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.source a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.confidence {
+    margin: 20px 0;
+}
+
+.confidence-bar {
+    height: 10px;
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    position: relative;
+}
+
+.confidence-bar span {
+    display: block;
+    height: 100%;
+    border-radius: 5px;
+}
+
+.confidence-score {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.factors ul {
+    list-style: none;
+    margin-top: 10px;
+}
+
+.factors li {
+    margin-bottom: 5px;
+}
+
+.extra-info ul {
+    list-style: none;
+    margin-top: 15px;
+}
+
+.extra-info a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Fake News Detector</div>
+            <div class="status" id="status">News Accuracy: <span id="verdict">Loading...</span></div>
+        </header>
+        
+        <div class="result">
+            <h2 id="newsHeadline">News Headline</h2>
+            <p class="source"><a href="#" id="sourceLink">Source: Example News</a></p>
+            
+            <div class="confidence">
+                <div class="confidence-bar" id="confidenceBar"></div>
+                <div class="confidence-score" id="confidenceScore">Loading...</div>
+            </div>
+            
+            <div class="factors">
+                <h3>Why This Was Detected As:</h3>
+                <ul id="factorsList">
+                    <!-- Factors will be dynamically inserted here -->
+                </ul>
+            </div>
+            
+            <div class="extra-info">
+                <p><strong>Related News:</strong></p>
+                <ul id="relatedNews">
+                    <!-- Related news will be dynamically inserted here -->
+                </ul>
+                
+                <p><strong>Fact-Check Resources:</strong></p>
+                <ul>
+                    <li><a href="https://www.snopes.com/" target="_blank">Snopes</a></li>
+                    <li><a href="https://www.factcheck.org/" target="_blank">FactCheck.org</a></li>
+                    <li><a href="https://www.politifact.com/" target="_blank">PolitiFact</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <button id="shareBtn">Share Result</button>
+            <button id="reportBtn">Report the News</button>
+        </footer>
+    </div>
+
+    <script >
+        // Sample Data to simulate Fake News detection result
+const resultData = {
+    headline: "The Moon Landing Was a Hoax",
+    source: "Example News",
+    url: "https://example.com",
+    status: "Fake",
+    confidence: 78,
+    factors: [
+        { name: "Biased Language", confidence: 85 },
+        { name: "Source Credibility", confidence: 50 },
+        { name: "Fact-Check Agreement", confidence: 65 },
+    ],
+    relatedNews: [
+        { title: "Moon Landing Conspiracy Theories", url: "https://relatednews.com/1" },
+        { title: "The Truth Behind the Moon Landing", url: "https://relatednews.com/2" }
+    ]
+};
+
+// DOM Elements
+const statusEl = document.getElementById("status");
+const verdictEl = document.getElementById("verdict");
+const confidenceBar = document.getElementById("confidenceBar");
+const confidenceScore = document.getElementById("confidenceScore");
+const factorsList = document.getElementById("factorsList");
+const relatedNewsEl = document.getElementById("relatedNews");
+const newsHeadline = document.getElementById("newsHeadline");
+const sourceLink = document.getElementById("sourceLink");
+
+const shareBtn = document.getElementById("shareBtn");
+const reportBtn = document.getElementById("reportBtn");
+
+// Function to set the result data
+function setResultData(data) {
+    // Set Headline and Source
+    newsHeadline.textContent = data.headline;
+    sourceLink.textContent = "Source: " + data.source;
+    sourceLink.href = data.url;
+
+    // Set Status
+    verdictEl.textContent = data.status;
+    if (data.status === "Verified") {
+        verdictEl.style.color = "green";
+    } else if (data.status === "Suspicious") {
+        verdictEl.style.color = "orange";
+    } else if (data.status === "Fake") {
+        verdictEl.style.color = "red";
+    }
+
+    // Set Confidence
+    confidenceBar.style.width = data.confidence + "%";
+    confidenceScore.textContent = data.confidence + "% Confidence";
+
+    // Set Factors
+    factorsList.innerHTML = "";
+    data.factors.forEach(factor => {
+        const li = document.createElement("li");
+        li.textContent = `${factor.name}: ${factor.confidence}%`;
+        factorsList.appendChild(li);
+    });
+
+    // Set Related News
+    relatedNewsEl.innerHTML = "";
+    data.relatedNews.forEach(news => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = news.url;
+        a.textContent = news.title;
+        li.appendChild(a);
+        relatedNewsEl.appendChild(li);
+    });
+}
+
+// Call the function to populate the page with sample data
+setResultData(resultData);
+
+// Event Listeners
+shareBtn.addEventListener("click", () => {
+    alert("Share functionality is under development!");
+});
+
+reportBtn.addEventListener("click", () => {
+    alert("Report functionality is under development!");
+});
+
+    </script>
+</body>
+</html>
