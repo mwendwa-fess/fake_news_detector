@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fake News Detector - Input News</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 800px;
+      margin: 50px 50px 50px 10px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      height: 400px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: vertical;
+      margin-bottom: 20px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      font-size: 1.2rem;
+      color: white;
+      background-color: #ff4757;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #ff6b81;
+    }
+    .result-panel {
+      position: fixed;
+      top: 0;
+      right: -50%;
+      width: 50%;
+      height: 100vh;
+      background-color: white;
+      box-shadow: -4px 0 15px rgba(0, 0, 0, 0.2);
+      transition: right 0.5s ease;
+      z-index: 1000;
+    }
+    .result-panel.open {
+      right: 0;
+    }
+    .result-content {
+      padding: 20px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333;
+    }
+    .close-btn:hover {
+      color: #ff4757;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+    .overlay.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Please paste here the article</h1>
+    <form method="post" action="">
+      {% csrf_token %}
+      <textarea id="newsInput" name="news_text" placeholder="Paste or type the news article here..." required>{{ news_text|default:'' }}</textarea>
+      <button type="submit">Check News</button>
+    </form>
+  </div>
+  {% if result %}
+    <div class="result-panel open" id="resultPanel">
+      <div class="close-btn" id="closeButton">&#10005;</div>
+      <div class="result-content">
+        <h2>Analysis Result</h2>
+        <p id="resultText">The news is <strong>{{ result }}</strong>.</p>
+      </div>
+    </div>
+    <div class="overlay active" id="overlay"></div>
+  {% endif %}
+</body>
+<script>
+  const closeButton = document.getElementById('closeButton');
+  const overlay = document.getElementById('overlay');
+
+  function closePanel() {
+    const resultPanel = document.getElementById('resultPanel');
+    resultPanel.classList.remove('open');
+    overlay.classList.remove('active');
+  }
+
+  closeButton.addEventListener('click', closePanel);
+  overlay.addEventListener('click', closePanel);
+</script>
+</html>

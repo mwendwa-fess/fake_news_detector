@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fake News Detector</title>
+  {% load static %}
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 90vh; /* Full viewport height */
+      overflow: hidden;
+      border-radius: 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      margin-top: 0px;
+    }
+
+    .carousel {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      height: 100%; /* Ensure carousel takes full height */
+    }
+
+    .slide {
+      flex-shrink: 0;
+      width: 100%;
+      height: 100%; /* Ensure slide takes full height */
+      position: relative;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: 100%; /* Ensure image takes full height */
+      object-fit: cover; /* Maintain aspect ratio */
+    }
+
+    .slide-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      z-index: 2;
+      width: 80%; /* Limit width for better readability */
+      max-width: 800px; /* Maximum width for content */
+    }
+
+    .slide-content h1 {
+      font-size: 3rem;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .slide-content p {
+      font-size: 1.2rem;
+      margin: 10px 0 20px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .slide-content button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      color: white;
+      background-color: #ff4757;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .slide-content button:hover {
+      background-color: #ff6b81;
+    }
+
+    .prev, .next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 15px;
+      cursor: pointer;
+      font-size: 24px;
+      z-index: 2;
+      border-radius: 50%;
+      transition: background-color 0.3s ease;
+    }
+
+    .prev:hover, .next:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .prev {
+      left: 20px;
+    }
+
+    .next {
+      right: 20px;
+    }
+
+    .dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .dot.active {
+      background-color: white;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="carousel">
+      <div class="slide">
+        <img src="{% static 'images/pexels-stephen-o-ojeleye-2149617206-30803262.jpg' %}" alt="Slide 1">
+        <div class="overlay"></div>
+        <div class="slide-content">
+          <h1>Detect Fake News</h1>
+          <p>Stay informed and verify the authenticity of news with our advanced detection tools.</p>
+          <button>Get Started</button>
+        </div>
+      </div>
+      <div class="slide">
+        <img src="{% static 'images/pexels-leo-gilmant-1144880343-30967124.jpg' %}" alt="Slide 2">
+        <div class="overlay"></div>
+        <div class="slide-content">
+          <h1>Real-Time Analysis</h1>
+          <p>Analyze news articles in real-time and get instant results.</p>
+          <button>Learn More</button>
+        </div>
+      </div>
+      <div class="slide">
+        <img src="{% static 'images/pexels-olly-3771127.jpg' %}" alt="Slide 3">
+        <div class="overlay"></div>
+        <div class="slide-content">
+          <h1>Trustworthy Sources</h1>
+          <p>Access verified and reliable news sources to stay updated.</p>
+          <button>Explore Sources</button>
+        </div>
+      </div>
+    </div>
+    <button class="prev" onclick="prevSlide()">&#10094;</button>
+    <button class="next" onclick="nextSlide()">&#10095;</button>
+    <div class="dots">
+      <span class="dot active" onclick="goToSlide(0)"></span>
+      <span class="dot" onclick="goToSlide(1)"></span>
+      <span class="dot" onclick="goToSlide(2)"></span>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelector('.carousel');
+    const dots = document.querySelectorAll('.dot');
+
+    function showSlide(index) {
+      if (index < 0) {
+        index = slides.children.length - 1;
+      } else if (index >= slides.children.length) {
+        index = 0;
+      }
+
+      slides.style.transform = `translateX(-${index * 100}%)`;
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+
+      currentSlide = index;
+    }
+
+    function prevSlide() {
+      showSlide(currentSlide - 1);
+    }
+
+    function nextSlide() {
+      showSlide(currentSlide + 1);
+    }
+
+    function goToSlide(index) {
+      showSlide(index);
+    }
+
+    // Auto-play the carousel
+    setInterval(nextSlide, 5000);
+  </script>
+</body>
+</html>

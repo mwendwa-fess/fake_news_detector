@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333;
+      padding: 20px 30px;
+      color: white;
+    }
+
+    .logo a {
+      text-decoration: none;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .nav {
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .nav .menu {
+      list-style: none;
+      display: inline-flex;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .nav .menu li {
+      margin-left: 20px;
+      position: relative;
+    }
+
+    .nav .menu li::before {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background-color: red;
+      transition: width 0.3s ease;
+    }
+
+    .nav .menu li:hover::before,
+    .nav .menu li.active::before {
+      width: 100%; /* Expand to full width on hover or when active */
+    }
+
+    .nav .menu li a {
+      text-decoration: none;
+      color: white;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+
+    .nav .menu li a:hover,
+    .nav .menu li.active a {
+      color: red; /* Change text color on hover or when active */
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+    }
+
+    .search input[type="text"] {
+      padding: 5px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .search button[type="submit"] {
+      padding: 5px 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #555;
+      color: white;
+      cursor: pointer;
+    }
+
+    .search button[type="submit"]:hover {
+      background-color: #444;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <a href=""><span style="color: red;">Fake</span> News <span style="color: rgb(185, 185, 226);">Detector</span></a>
+    </div>
+    <nav class="nav">
+      <ul class="menu">
+        <li ><a href="{% url 'home'%}" >Home</a></li>
+        <li class="active"><a href="{% url 'news_input_page'%}" class="active">Input Data</a></li>
+        <li><a href="{% url 'news_input_page'%}">Community</a></li>
+      </ul>
+    </nav>
+    <div class="search">
+      <input type="text" placeholder="Search...">
+      <button type="submit">Search</button>
+    </div>
+  </header>
+
+  <script>
+    // JavaScript to handle the active state
+    const menuItems = document.querySelectorAll('.nav .menu li');
+
+    menuItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        // Remove the 'active' class from all menu items
+        menuItems.forEach((li) => li.classList.remove('active'));
+        // Add the 'active' class to the clicked menu item
+        item.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
